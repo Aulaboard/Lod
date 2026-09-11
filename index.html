@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ປ້າຍທະບຽນນີ້ແມ່ນຂອງໃຜ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;600;700&display=swap');
+
+  :root{
+    --ink:#0F1115;
+    --surface:#181B21;
+    --surface-2:#20242C;
+    --border:#2A2F38;
+    --gold:#E3A63E;
+    --gold-dark:#B9822A;
+    --gold-soft:rgba(227,166,62,.14);
+    --text:#EDEEF0;
+    --text-dim:#868D98;
+    --danger:#E5555B;
+    --danger-soft:rgba(229,85,91,.12);
+    --success:#3FBD79;
+    --plate-blue:#1E4FA0;
+    --radius-lg:16px;
+    --radius-md:11px;
+    --radius-sm:8px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; background:var(--ink); color:var(--text);
+    font-family:'Noto Sans Lao', sans-serif; font-weight:400;
+    -webkit-font-smoothing:antialiased;
+  }
+  body{ padding:22px 16px 90px; min-height:100vh; }
+  .wrap{ max-width:460px; margin:0 auto; }
+
+  svg.icon{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; vertical-align:-4px; }
+
+  /* --- Identity row --- */
+  .brand{ display:flex; align-items:center; gap:11px; margin-bottom:22px; }
+  .brand-mark{
+    width:38px; height:38px; border-radius:10px; flex-shrink:0;
+    background:linear-gradient(155deg, var(--gold), var(--gold-dark));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 14px rgba(227,166,62,.28);
+  }
+  .brand-mark svg{ width:20px; height:20px; stroke:#1a1200; stroke-width:1.9; }
+  .brand-text h1{ font-size:1.08rem; font-weight:600; margin:0; letter-spacing:.1px; }
+  .brand-text p{ margin:1px 0 0; color:var(--text-dim); font-size:.78rem; }
+
+  /* --- Plate hero --- */
+  .plate-shell{
+    background:#fff; border-radius:var(--radius-lg); overflow:hidden;
+    box-shadow:0 16px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.6);
+    margin-bottom:14px; position:relative;
+  }
+  .plate-shell::after{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(120deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 28%);
+  }
+  .plate-input{
+    width:100%; border:none; outline:none; background:transparent;
+    text-align:center; font-family:'Noto Sans Lao', sans-serif; font-weight:700;
+    font-size:1.7rem; color:#161616; padding:24px 14px 14px;
+    letter-spacing:1.5px; position:relative; z-index:1;
+  }
+  .plate-input::placeholder{ color:#c2c2c2; font-weight:500; font-size:1.05rem; letter-spacing:.5px; }
+  .plate-strip{
+    background:var(--plate-blue); color:rgba(255,255,255,.92); text-align:center;
+    font-size:.74rem; padding:8px; letter-spacing:.2px; font-weight:400;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .plate-strip svg{ width:14px; height:14px; opacity:.85; }
+
+  /* --- Result stage --- */
+  #resultArea{ min-height:4px; }
+
+  .stage-empty{
+    text-align:center; color:var(--text-dim); font-size:.86rem;
+    padding:34px 20px; display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .stage-empty svg{ width:26px; height:26px; opacity:.5; }
+
+  .card{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:18px; display:flex; gap:14px;
+    align-items:flex-start; margin-bottom:10px;
+    animation: rise .22s ease;
+  }
+  @keyframes rise{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+
+  .avatar{
+    width:60px; height:60px; border-radius:13px; object-fit:cover;
+    background:var(--surface-2); flex-shrink:0; border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; color:var(--text-dim);
+  }
+  .avatar svg{ width:22px; height:22px; opacity:.6; }
+
+  .card .info{ flex:1; min-width:0; }
+  .plate-tag{
+    display:inline-block; background:var(--gold-soft); color:var(--gold);
+    font-weight:600; font-size:.8rem; padding:3px 10px; border-radius:6px;
+    margin-bottom:8px; letter-spacing:.3px;
+  }
+  .card .name{ font-size:1.08rem; font-weight:600; margin:0 0 8px; }
+  .detail-row{
+    display:flex; align-items:center; gap:8px; color:var(--text-dim);
+    font-size:.86rem; padding:5px 0;
+  }
+  .detail-row svg{ opacity:.65; }
+  .card .note{
+    color:var(--text-dim); font-size:.82rem; margin-top:8px; padding-top:8px;
+    border-top:1px solid var(--border); line-height:1.5;
+  }
+  .card-actions{ display:flex; gap:8px; margin-top:14px; }
+
+  .match-row{
+    display:flex; align-items:center; gap:11px; padding:11px 12px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-md); margin-bottom:8px; cursor:pointer;
+    transition:border-color .15s ease;
+  }
+  .match-row:active{ border-color:var(--gold); }
+  .thumb-sm{
+    width:36px; height:36px; border-radius:9px; object-fit:cover;
+    background:var(--surface-2); flex-shrink:0; border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; color:var(--text-dim);
+  }
+  .thumb-sm svg{ width:15px; height:15px; opacity:.6; }
+  .match-plate{ font-weight:600; font-size:.8rem; color:var(--gold); }
+  .match-name{ font-size:.93rem; }
+
+  .stage-notfound{
+    text-align:center; padding:26px 18px; background:var(--surface);
+    border:1px dashed var(--border); border-radius:var(--radius-lg);
+  }
+  .stage-notfound svg{ width:24px; height:24px; color:var(--text-dim); opacity:.6; margin-bottom:8px; }
+  .stage-notfound p{ color:var(--text-dim); font-size:.88rem; margin:0 0 16px; }
+
+  /* --- Buttons --- */
+  button, label.btn{ font-family:'Noto Sans Lao', sans-serif; cursor:pointer; border:none; }
+  .btn{
+    padding:12px 18px; border-radius:var(--radius-md); font-size:.9rem; font-weight:500;
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    transition:transform .1s ease, background .15s ease;
+  }
+  .btn:active{ transform:scale(.97); }
+  .btn-primary{ background:var(--gold); color:#1a1200; }
+  .btn-primary:active{ background:var(--gold-dark); }
+  .btn-ghost{ background:var(--surface-2); color:var(--text); border:1px solid var(--border); }
+  .btn-ghost:active{ background:var(--border); }
+  .btn-danger{ background:var(--danger-soft); color:var(--danger); }
+  .btn-danger:active{ background:rgba(229,85,91,.22); }
+  .btn-block{ width:100%; }
+
+  /* --- Roster nav tile --- */
+  .roster-tile{
+    display:flex; align-items:center; gap:13px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:15px 16px; margin-top:20px;
+    transition:border-color .15s ease;
+  }
+  .roster-tile:active{ border-color:var(--gold); }
+  .roster-icon{
+    width:38px; height:38px; border-radius:10px; background:var(--surface-2);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    color:var(--gold);
+  }
+  .roster-tile .rt-title{ font-size:.94rem; font-weight:500; }
+  .roster-tile .rt-sub{ color:var(--text-dim); font-size:.78rem; margin-top:1px; }
+  .roster-tile .rt-arrow{ margin-left:auto; color:var(--text-dim); }
+
+  /* --- Views --- */
+  .view{ display:none; }
+  .view.active{ display:block; animation: rise .22s ease; }
+
+  .top-nav{ display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+  .nav-back{
+    width:34px; height:34px; border-radius:9px; background:var(--surface);
+    border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
+    color:var(--text); flex-shrink:0;
+  }
+  .nav-back:active{ background:var(--surface-2); }
+  .top-nav h2{ font-size:1.02rem; font-weight:600; margin:0; }
+
+  .backup-row{ display:flex; gap:8px; margin-bottom:16px; }
+  .backup-row .btn{ flex:1; font-size:.82rem; padding:10px 8px; }
+
+  .list-row{
+    display:flex; align-items:center; gap:12px; padding:12px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-md); margin-bottom:8px; cursor:pointer;
+  }
+  .list-row:active{ border-color:var(--gold); }
+  .list-row .rinfo{ flex:1; min-width:0; }
+  .list-row .rplate{ font-weight:600; color:var(--gold); font-size:.82rem; }
+  .list-row .rname{ font-size:.94rem; margin-top:1px; }
+
+  .fab{
+    position:fixed; bottom:26px; right:22px; width:56px; height:56px;
+    border-radius:50%; background:var(--gold); color:#1a1200;
+    box-shadow:0 10px 24px rgba(227,166,62,.35);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .12s ease;
+  }
+  .fab svg{ width:24px; height:24px; stroke-width:2; }
+  .fab:active{ transform:scale(.93); }
+
+  /* --- Form --- */
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:.82rem; color:var(--text-dim); margin-bottom:7px; }
+  .field input, .field textarea{
+    width:100%; background:var(--surface); border:1px solid var(--border);
+    color:var(--text); border-radius:var(--radius-md); padding:12px 13px; font-size:.95rem;
+    font-family:'Noto Sans Lao', sans-serif; outline:none; transition:border-color .15s ease;
+  }
+  .field input:focus, .field textarea:focus{ border-color:var(--gold); }
+  .field textarea{ resize:vertical; min-height:64px; }
+
+  .photo-drop{
+    display:flex; align-items:center; gap:14px; margin-bottom:18px;
+    padding:12px; background:var(--surface); border:1px dashed var(--border);
+    border-radius:var(--radius-md);
+  }
+  .photo-preview{
+    width:66px; height:66px; border-radius:12px; object-fit:cover;
+    background:var(--surface-2); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text-dim);
+  }
+  .photo-preview svg{ width:22px; height:22px; opacity:.5; }
+  .photo-drop-text{ font-size:.82rem; color:var(--text-dim); }
+  .photo-btn-wrap input[type=file]{ display:none; }
+  .photo-btn-wrap .btn{ font-size:.84rem; padding:9px 14px; }
+
+  .form-actions{ display:flex; gap:10px; margin-top:6px; }
+  .form-actions .btn{ flex:1; }
+
+  .toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%);
+    background:var(--surface-2); color:var(--text); padding:11px 20px;
+    border-radius:24px; font-size:.85rem; border:1px solid var(--border);
+    opacity:0; pointer-events:none; transition:opacity .2s;
+    box-shadow:0 8px 20px rgba(0,0,0,.45); white-space:nowrap;
+  }
+  .toast.show{ opacity:1; }
+
+  .empty-roster{ text-align:center; color:var(--text-dim); font-size:.85rem; padding:30px 20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ HOME VIEW ============ -->
+  <div class="view active" id="view-home">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24"><path d="M4 16l1.2-4.8A2 2 0 0 1 7.14 9.6h9.72a2 2 0 0 1 1.94 1.6L20 16"/><path d="M3 16h18v3a1 1 0 0 1-1 1h-1.5a1 1 0 0 1-1-1v-1H6.5v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3z"/><circle cx="7" cy="16.5" r="1.1"/><circle cx="17" cy="16.5" r="1.1"/></svg>
+      </div>
+      <div class="brand-text">
+        <h1>ປ້າຍທະບຽນນີ້ແມ່ນຂອງໃຜ</h1>
+        <p>ພິມທະບຽນລົດ ເພື່ອຄົ້ນຫາເຈົ້າຂອງລົດ</p>
+      </div>
+    </div>
+
+    <div class="plate-shell">
+      <input id="searchInput" class="plate-input" placeholder="ຕົວຢ່າງ: ກຂ 1234" autocomplete="off" />
+      <div class="plate-strip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        ພິມເພື່ອຄົ້ນຫາລູກຄ້າ
+      </div>
+    </div>
+
+    <div id="resultArea"></div>
+
+    <div class="roster-tile" id="manageLink">
+      <div class="roster-icon">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div>
+        <div class="rt-title">ລາຍຊື່ລູກຄ້າທັງໝົດ</div>
+        <div class="rt-sub" id="totalCount">0 ຄົນ</div>
+      </div>
+      <svg class="icon rt-arrow" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+  </div>
+
+  <!-- ============ LIST VIEW ============ -->
+  <div class="view" id="view-list">
+    <div class="top-nav">
+      <button class="nav-back" id="backFromList">
+        <svg class="icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <h2>ລູກຄ້າທັງໝົດ</h2>
+    </div>
+    <div class="backup-row">
+      <button class="btn btn-ghost" id="exportBtn">
+        <svg class="icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        ສົ່ງອອກ
+      </button>
+      <label class="btn btn-ghost" for="importInput">
+        <svg class="icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="M7 14l5-5 5 5"/><path d="M5 3h14"/></svg>
+        ນຳເຂົ້າ
+      </label>
+      <input type="file" id="importInput" accept="application/json" style="display:none;" />
+    </div>
+    <div id="listArea"></div>
+  </div>
+
+  <!-- ============ FORM VIEW ============ -->
+  <div class="view" id="view-form">
+    <div class="top-nav">
+      <button class="nav-back" id="backFromForm">
+        <svg class="icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <h2 id="formTitle">ເພີ່ມລູກຄ້າໃໝ່</h2>
+    </div>
+
+    <div class="photo-drop">
+      <div class="photo-preview" id="photoPreview">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </div>
+      <div style="flex:1;">
+        <div class="photo-drop-text" style="margin-bottom:8px;">ຮູບຖ່າຍລູກຄ້າ ຫຼືລົດ (ຖ້າມີ)</div>
+        <div class="photo-btn-wrap">
+          <label class="btn btn-ghost" for="photoInput">ເລືອກຮູບພາບ</label>
+          <input type="file" id="photoInput" accept="image/*" />
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>ເລກທະບຽນ *</label>
+      <input id="formPlate" placeholder="ຕົວຢ່າງ: ກຂ 1234 ນະຄອນຫຼວງວຽງຈັນ" />
+    </div>
+    <div class="field">
+      <label>ຊື່ລູກຄ້າ *</label>
+      <input id="formName" placeholder="ຊື່-ນາມສະກຸນ ຫຼືຊື່ຫຼິ້ນ" />
+    </div>
+    <div class="field">
+      <label>ເບີໂທ</label>
+      <input id="formPhone" placeholder="020-xxx-xxxxx" />
+    </div>
+    <div class="field">
+      <label>ຮຸ່ນລົດ / ສີ</label>
+      <input id="formCar" placeholder="ຕົວຢ່າງ: Honda City ສີຂາວ" />
+    </div>
+    <div class="field">
+      <label>ໝາຍເຫດ</label>
+      <textarea id="formNote" placeholder="ຕົວຢ່າງ: ບ່ອນຈອດປະຈຳ, ເບີສຳຮອງ ແລະອື່ນໆ"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" id="saveBtn">ບັນທຶກ</button>
+    </div>
+    <div class="form-actions" id="deleteWrap" style="display:none; margin-top:10px;">
+      <button class="btn btn-danger" id="deleteBtn">
+        <svg class="icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        ລຶບລູກຄ້າລາຍນີ້
+      </button>
+    </div>
+  </div>
+
+  <button class="fab" id="fabAdd" style="display:none;">
+    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const STORAGE_KEY = 'customers';
+  let customers = [];
+  let editingId = null;
+  let pendingPhoto = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  const ICON_CAR = '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16l1.2-4.8A2 2 0 0 1 7.14 9.6h9.72a2 2 0 0 1 1.94 1.6L20 16"/><path d="M3 16h18v3a1 1 0 0 1-1 1h-1.5a1 1 0 0 1-1-1v-1H6.5v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3z"/><circle cx="7" cy="16.5" r="1.1"/><circle cx="17" cy="16.5" r="1.1"/></svg>';
+  const ICON_PHONE = '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>';
+  const ICON_NOTE = '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H8l-4 4z"/></svg>';
+  const ICON_USER = '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+  const ICON_SEARCH_OFF = '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M8 8l6 6"/></svg>';
+
+  function showView(name){
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    $('view-' + name).classList.add('active');
+    $('fabAdd').style.display = (name === 'list') ? 'flex' : 'none';
+  }
+
+  function showToast(msg){
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function normalizePlate(s){
+    return (s || '').replace(/\s+/g, '').toUpperCase();
+  }
+
+  async function loadCustomers(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      customers = raw ? JSON.parse(raw) : [];
+    }catch(e){
+      customers = [];
+    }
+    renderHome();
+  }
+
+  async function saveCustomers(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(customers));
+      return true;
+    }catch(e){
+      showToast('ບັນທຶກບໍ່ສຳເລັດ ພື້ນທີ່ຈັດເກັບອາດເຕັມ ຫຼືຮູບໃຫຍ່ເກີນໄປ');
+      return false;
+    }
+  }
+
+  function exportBackup(){
+    const blob = new Blob([JSON.stringify(customers, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0,10);
+    a.href = url;
+    a.download = `customers-backup-${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast('ດາວໂຫຼດໄຟລ໌ສຳຮອງແລ້ວ');
+  }
+
+  function importBackup(file){
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try{
+        const parsed = JSON.parse(e.target.result);
+        if(!Array.isArray(parsed)) throw new Error('bad format');
+        if(!confirm(`ພົບຂໍ້ມູນລູກຄ້າ ${parsed.length} ຄົນໃນໄຟລ໌ນີ້\nຈະແທນທີ່ຂໍ້ມູນທັງໝົດທີ່ມີຢູ່ດຽວນີ້ ດຳເນີນການຕໍ່ບໍ?`)) return;
+        customers = parsed;
+        await saveCustomers();
+        showToast('ນຳເຂົ້າຂໍ້ມູນສຳເລັດ');
+        renderHome();
+        renderList();
+      }catch(err){
+        showToast('ໄຟລ໌ບໍ່ຖືກຕ້ອງ ນຳເຂົ້າບໍ່ໄດ້');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function thumbHtml(c, size){
+    const cls = size === 'lg' ? 'avatar' : 'thumb-sm';
+    if(c.photo){
+      return `<img class="${cls}" src="${c.photo}" />`;
+    }
+    return `<div class="${cls}">${ICON_USER}</div>`;
+  }
+
+  function renderHome(){
+    $('totalCount').textContent = customers.length + ' ຄົນ';
+    runSearch();
+  }
+
+  function runSearch(){
+    const raw = $('searchInput').value;
+    const q = normalizePlate(raw);
+    const area = $('resultArea');
+
+    if(!q){
+      area.innerHTML = `<div class="stage-empty">${ICON_CAR}<span>ພິມທະບຽນລົດຂ້າງເທິງເພື່ອເບິ່ງຂໍ້ມູນລູກຄ້າ</span></div>`;
+      return;
+    }
+
+    const exact = customers.find(c => normalizePlate(c.plate) === q);
+    if(exact){
+      area.innerHTML = renderCard(exact);
+      bindCardActions(exact.id);
+      return;
+    }
+
+    const partial = customers.filter(c => normalizePlate(c.plate).includes(q));
+    if(partial.length === 1){
+      area.innerHTML = renderCard(partial[0]);
+      bindCardActions(partial[0].id);
+      return;
+    }
+    if(partial.length > 1){
+      area.innerHTML = partial.map(c => `
+        <div class="match-row" data-id="${c.id}">
+          ${thumbHtml(c, 'sm')}
+          <div>
+            <div class="match-plate">${escapeHtml(c.plate)}</div>
+            <div class="match-name">${escapeHtml(c.name)}</div>
+          </div>
+        </div>`).join('');
+      area.querySelectorAll('.match-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const cust = customers.find(c=>c.id===row.dataset.id);
+          $('searchInput').value = cust ? cust.plate : '';
+          runSearch();
+        });
+      });
+      return;
+    }
+
+    area.innerHTML = `
+      <div class="stage-notfound">
+        ${ICON_SEARCH_OFF}
+        <p>ບໍ່ພົບລູກຄ້າທີ່ໃຊ້ທະບຽນນີ້</p>
+        <button class="btn btn-primary" id="addFromSearch">ເພີ່ມລູກຄ້າໃໝ່ດ້ວຍທະບຽນນີ້</button>
+      </div>`;
+    $('addFromSearch').addEventListener('click', () => openForm(null, raw));
+  }
+
+  function renderCard(c){
+    return `
+      <div class="card">
+        ${thumbHtml(c, 'lg')}
+        <div class="info">
+          <div class="plate-tag">${escapeHtml(c.plate)}</div>
+          <div class="name">${escapeHtml(c.name)}</div>
+          ${c.phone ? `<div class="detail-row">${ICON_PHONE}<span>${escapeHtml(c.phone)}</span></div>` : ''}
+          ${c.car ? `<div class="detail-row">${ICON_CAR}<span>${escapeHtml(c.car)}</span></div>` : ''}
+          ${c.note ? `<div class="note">${escapeHtml(c.note)}</div>` : ''}
+          <div class="card-actions">
+            <button class="btn btn-ghost" data-edit="${c.id}">ແກ້ໄຂຂໍ້ມູນ</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function bindCardActions(id){
+    const editBtn = document.querySelector(`[data-edit="${id}"]`);
+    if(editBtn){
+      editBtn.addEventListener('click', () => {
+        const c = customers.find(x => x.id === id);
+        openForm(c);
+      });
+    }
+  }
+
+  function escapeHtml(s){
+    return (s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function renderList(){
+    const area = $('listArea');
+    if(customers.length === 0){
+      area.innerHTML = `<div class="empty-roster">ຍັງບໍ່ມີລູກຄ້າໃນລະບົບ ກົດປຸ່ມ + ເພື່ອເພີ່ມຄົນທຳອິດ</div>`;
+      return;
+    }
+    area.innerHTML = customers.map(c => `
+      <div class="list-row" data-id="${c.id}">
+        ${thumbHtml(c, 'sm')}
+        <div class="rinfo">
+          <div class="rplate">${escapeHtml(c.plate)}</div>
+          <div class="rname">${escapeHtml(c.name)}</div>
+        </div>
+      </div>`).join('');
+    area.querySelectorAll('.list-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const c = customers.find(x => x.id === row.dataset.id);
+        openForm(c);
+      });
+    });
+  }
+
+  function openForm(c, prefillPlate){
+    editingId = c ? c.id : null;
+    pendingPhoto = c ? (c.photo || null) : null;
+    $('formTitle').textContent = c ? 'ແກ້ໄຂຂໍ້ມູນລູກຄ້າ' : 'ເພີ່ມລູກຄ້າໃໝ່';
+    $('formPlate').value = c ? c.plate : (prefillPlate || '');
+    $('formName').value = c ? c.name : '';
+    $('formPhone').value = c ? (c.phone || '') : '';
+    $('formCar').value = c ? (c.car || '') : '';
+    $('formNote').value = c ? (c.note || '') : '';
+    updatePhotoPreview();
+    $('deleteWrap').style.display = c ? 'flex' : 'none';
+    showView('form');
+  }
+
+  function updatePhotoPreview(){
+    const p = $('photoPreview');
+    if(pendingPhoto){
+      p.outerHTML = `<img class="photo-preview" id="photoPreview" src="${pendingPhoto}" />`;
+    }else{
+      p.outerHTML = `<div class="photo-preview" id="photoPreview"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
+    }
+  }
+
+  function resizeAndStorePhoto(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 400;
+          let w = img.width, h = img.height;
+          if(w > h && w > maxDim){ h = h * (maxDim / w); w = maxDim; }
+          else if(h > maxDim){ w = w * (maxDim / h); h = maxDim; }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.72));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ---- Event bindings ----
+  $('searchInput').addEventListener('input', runSearch);
+
+  $('manageLink').addEventListener('click', () => {
+    renderList();
+    showView('list');
+  });
+  $('backFromList').addEventListener('click', () => showView('home'));
+
+  $('exportBtn').addEventListener('click', exportBackup);
+  $('importInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(file) importBackup(file);
+    e.target.value = '';
+  });
+
+  $('backFromForm').addEventListener('click', () => { renderHome(); showView('home'); });
+
+  $('fabAdd').addEventListener('click', () => openForm(null));
+
+  $('photoInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    try{
+      pendingPhoto = await resizeAndStorePhoto(file);
+      updatePhotoPreview();
+    }catch(err){
+      showToast('ອ່ານຮູບບໍ່ສຳເລັດ ລອງໃໝ່');
+    }
+  });
+
+  $('saveBtn').addEventListener('click', async () => {
+    const plate = $('formPlate').value.trim();
+    const name = $('formName').value.trim();
+    if(!plate || !name){
+      showToast('ກະລຸນາປ້ອນເລກທະບຽນ ແລະຊື່ລູກຄ້າ');
+      return;
+    }
+    const record = {
+      id: editingId || (Date.now().toString(36) + Math.random().toString(36).slice(2,7)),
+      plate,
+      name,
+      phone: $('formPhone').value.trim(),
+      car: $('formCar').value.trim(),
+      note: $('formNote').value.trim(),
+      photo: pendingPhoto
+    };
+    if(editingId){
+      const idx = customers.findIndex(c => c.id === editingId);
+      customers[idx] = record;
+    }else{
+      customers.push(record);
+    }
+    const ok = await saveCustomers();
+    if(ok){
+      showToast('ບັນທຶກແລ້ວ');
+      $('searchInput').value = plate;
+      renderHome();
+      showView('home');
+    }
+  });
+
+  $('deleteBtn').addEventListener('click', async () => {
+    if(!editingId) return;
+    if(!confirm('ລຶບຂໍ້ມູນລູກຄ້າລາຍນີ້ແທ້ບໍ?')) return;
+    customers = customers.filter(c => c.id !== editingId);
+    const ok = await saveCustomers();
+    if(ok){
+      showToast('ລຶບແລ້ວ');
+      $('searchInput').value = '';
+      renderHome();
+      showView('home');
+    }
+  });
+
+  loadCustomers();
+</script>
+</body>
+</html>
